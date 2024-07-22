@@ -1,20 +1,20 @@
-pipeline {
+pipeline { 
    agent any 
    environment {
-      GIT_REPO = 'YYY'
+      GIT_REPO = 'bookstore-back-new'
       GIT_CREDENTIAL_ID = '7c21addc-0cbf-4f2e-9bd8-eced479c56c6'
-      ARCHID_TOKEN = credentials('archid')
       SONARQUBE_URL = 'http://172.24.101.209:8082/sonar-isis2603'
+      ARCHID_TOKEN = credentials('archid')
+      SONAR_TOKEN = credentials('sonar-login')
    }
-   stages {
+   stages { 
       stage('Checkout') { 
          steps {
             scmSkip(deleteBuild: true, skipPattern:'.*\\[ci-skip\\].*')
 
-            git branch: 'master', 
+            git branch: 'main', 
                credentialsId: env.GIT_CREDENTIAL_ID,
                url: 'https://github.com/Uniandes-isis2603/' + env.GIT_REPO
-            
          }
       }
       stage('GitInspector') { 
@@ -37,10 +37,10 @@ pipeline {
          // Build artifacts
          steps {
             script {
-               docker.image('citools-isis2603:latest').inside('-v ${WORKSPACE}/maven:/root/.m2') {
+               docker.image('citools-isis2603:latest').inside('-v $HOME/.m2:/root/.m2:z -u root') {
                   sh '''
                      java -version
-                     ./mvnw clean package
+                     mvn clean install
                   '''
                }
             }
@@ -50,9 +50,9 @@ pipeline {
          // Run unit tests
          steps {
             script {
-               docker.image('citools-isis2603:latest').inside('-v ${WORKSPACE}/maven:/root/.m2') {                  
+               docker.image('citools-isis2603:latest').inside('-v $HOME/.m2:/root/.m2:z -u root') {                  
                   sh '''
-                     ./mvnw clean test
+                     mvn test
                   '''
                }
             }
@@ -62,9 +62,9 @@ pipeline {
          // Run static analysis
          steps {
             script {
-               docker.image('citools-isis2603:latest').inside('-v ${WORKSPACE}/maven:/root/.m2') {
+               docker.image('citools-isis2603:latest').inside('-v $HOME/.m2:/root/.m2:z -u root') {
                   sh '''
-                     ./mvnw clean verify sonar:sonar -Dsonar.host.url=${SONARQUBE_URL}
+                     mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.host.url=${SONARQUBE_URL}
                   '''
                }
             }
@@ -83,7 +83,7 @@ pipeline {
                }
             }
          }
-      }     
+      }      
    }
    post {
       always {
