@@ -11,7 +11,7 @@
 	<groupId>co.edu.uniandes.dse</groupId>
 	<artifactId>YYY</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bookstore</name>
+	<name>YYY</name>
 	<description>Demo project for Spring Boot</description>
 	<packaging>jar</packaging>
 	<properties>
