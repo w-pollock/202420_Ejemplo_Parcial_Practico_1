@@ -9,7 +9,7 @@
 
 ## Punto 1 (40%). Persistencia
 
-Esta aplicación tiene el propósito de crear un sistema de información para una clinica.
+Esta aplicación tiene el propósito de crear un sistema de información para una clínica.
 
 (15%) Cree la entidad _MedicoEntity_ en la carpeta correspondiente. Un médico tiene un nombre, un apellido, un registro médico y un id de tipo _Long_ que representa su llave primaria.
 
